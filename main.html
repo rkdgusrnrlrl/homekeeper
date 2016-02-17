@@ -63,36 +63,53 @@
 var this_month = "2";
 
 function makeTable(result){
-	var str ="<table class='table'><tr><th>선택</th><th>사용일자</th><th>수입/지출</th><th>내역</th><th>금액</th><th>삭제</th></tr>";
-	var inSum = 0;
-	var outSum = 0;
-	for(var i=0; i<result.length; i++){
-		str += "<tr><td><input type='radio' name='selecthomebook' hb_id='"+result[i].id+"' paydate='"+result[i].payDate+"'  in_out='"+result[i].inOut+"' content='"+result[i].content+"' money='"+result[i].money+"'/></td><td>"+result[i].payDate+"</td><td>"+(result[i].inOut=="in"?"수입":"지출")+"</td><td>"+result[i].content+"</td><td>"+result[i].money+"</td><td><button type='button' homebookid='"+result[i].id+"' class='close'>×</button></td></tr>";
-		
-		if(result[i].inOut=="in"){
-			inSum += parseInt(result[i].money);
-		}else{
-			outSum += parseInt(result[i].money);
-		}
-	}
-	str += "</table>";
-	$("#main").html(str);
-	$("#in_sum").html(inSum);
-	$("#out_sum").html(outSum);
-	$("#total").html(inSum-outSum);
-	if($(this).attr("handle")!="insertHomebook"){
-		$(this).attr("handle","insertHomebook");
-	}
+    var str ="<table class='table'><tr><th>선택</th><th>사용일자</th><th>수입/지출</th><th>내역</th><th>금액</th><th>삭제</th></tr>";
+    var inSum = 0;
+    var outSum = 0;
+
+    for(var i=0; i<result.length; i++){
+        str += "<tr><td><input type='radio' name='selecthomebook' hb_id='"+result[i].id+"' paydate='"+result[i].payDate+"'  in_out='"+result[i].inOut+"' content='"+result[i].content+"' money='"+result[i].money+"'/></td><td>"+result[i].payDate+"</td><td>"+(result[i].inOut=="in"?"수입":"지출")+"</td><td>"+result[i].content+"</td><td>"+result[i].money+"</td><td><button type='button' homebookid='"+result[i].id+"' class='close'>×</button></td></tr>";
+
+        if(result[i].inOut=="in"){
+            inSum += parseInt(result[i].money);
+        }else{
+            outSum += parseInt(result[i].money);
+        }
+    }
+    str += "</table>";
+    $("#main").html(str);
+    $("#in_sum").html(inSum);
+    $("#out_sum").html(outSum);
+    $("#total").html(inSum-outSum);
+    if($(this).attr("handle")!="insertHomebook"){
+        $(this).attr("handle","insertHomebook");
+    }
+}
+
+function refreshTable(result){
+    $.ajax({
+        method : 'get',
+        url : "/api/homekeepers",
+        success : function (result) {
+
+            makeTable(result.homekeepers);
+
+        },
+        error : function(result){
+            alert("error : "+result);
+        },
+        dataType : 'json'
+    });//ajax end
 }
 
 function insert_update(handle, serialize){
 	$.ajax({
-        type : 'post',
+        type : 'get',
         url : "/api/homekeepers",
         data : "month="+this_month+"&handle="+handle+"&"+serialize,
         success : function (result) {
         	alert(result);
-        	makeTable(result);
+        	refreshTable(result);
         },
         error : function(result){
 			alert("error : "+result);
@@ -155,19 +172,7 @@ $(function(){
 		}else if($("#search_form>select[name=in_out]").val()==""){
     		alert("수입 혹은 지출을 선택해주세요");
     	}else{
-    		
-    		$.ajax({
-    	        type : 'post',
-    	        url : "/api",
-    	        data : "handle=searchDate"+"&"+$("#search_form").serialize(),
-    	        success : function (result) {
-    	        	makeTable(result);
-    	        },
-    	        error : function(result){
-    				alert("error : "+result);
-    			},
-    			dataType : 'json'
-    		});//ajax end
+    		insert_update()
     	}
 	});
 	
@@ -269,7 +274,7 @@ $(function(){
     	        url : "/api/homekeepers",
     	        data : "month="+this_month+"&handle="+$(this).attr("handle")+"&"+$("#homebookform").serialize(),
     	        success : function (result) {
-    	        	makeTable(result.homekeepers);
+    	        	refreshTable(result.homekeepers);
     	        },
     	        error : function(result){
     				alert("error : "+result);
@@ -279,8 +284,9 @@ $(function(){
     		//ajax end
     	}
     });
-    
-   
+
+    refreshTable();
+
 });//end $function 
 </script>
 </head>

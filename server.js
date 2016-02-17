@@ -138,6 +138,19 @@ router.get('/api/homekeepers', function (req, res)  {
 
 });
 
+//insert homekeeper
+router.post('/api/homekeepers', function (req, res)  {
+
+    var body = [];
+    req.on('data', function(chunk) {
+     console.log("chunk : " + chunk);
+     body.push(chunk);
+     }).on('end', function() {
+     console.log(body);
+     });
+    res.end();
+
+});
 
 
 
