@@ -1,0 +1,15 @@
+{
+  "name": "money-plan",
+  "version": "1.0.0",
+  "description": "housekeep application",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "rkdgusrnrlrl",
+  "license": "ISC",
+  "dependencies": {
+    "finalhandler": "^0.4.1",
+    "router": "^1.1.4"
+  }
+}
