@@ -60,9 +60,9 @@
 	
 </style>
 <script type="text/javascript">
-var this_month = ${sessionScope.month}
+var this_month = "2";
 
-function refreshTable(result){
+function makeTable(result){
 	var str ="<table class='table'><tr><th>선택</th><th>사용일자</th><th>수입/지출</th><th>내역</th><th>금액</th><th>삭제</th></tr>";
 	var inSum = 0;
 	var outSum = 0;
@@ -88,11 +88,11 @@ function refreshTable(result){
 function insert_update(handle, serialize){
 	$.ajax({
         type : 'post',
-        url : "/api",
+        url : "/api/homekeepers",
         data : "month="+this_month+"&handle="+handle+"&"+serialize,
         success : function (result) {
         	alert(result);
-        	refreshTable(result);
+        	makeTable(result);
         },
         error : function(result){
 			alert("error : "+result);
@@ -161,7 +161,7 @@ $(function(){
     	        url : "/api",
     	        data : "handle=searchDate"+"&"+$("#search_form").serialize(),
     	        success : function (result) {
-    	        	refreshTable(result);
+    	        	makeTable(result);
     	        },
     	        error : function(result){
     				alert("error : "+result);
@@ -264,18 +264,18 @@ $(function(){
     		alert("숫자만 입력해주세요");
     	}else{
     		insert_update($(this).attr("handle"), $("#homebookform").serialize());
-    		/*$.ajax({
-    	        type : 'post',
-    	        url : "/api",
+    		$.ajax({
+    	        type : 'get',
+    	        url : "/api/homekeepers",
     	        data : "month="+this_month+"&handle="+$(this).attr("handle")+"&"+$("#homebookform").serialize(),
     	        success : function (result) {
-    	        	refreshTable(result);
+    	        	makeTable(result.homekeepers);
     	        },
     	        error : function(result){
     				alert("error : "+result);
     			},
     			dataType : 'json'
-    		});*/
+    		});
     		//ajax end
     	}
     });
@@ -295,7 +295,7 @@ $(function(){
     
     <form class="navbar-form navbar-right" role="search">
       	<span>
-    		<span id="name">${name}</span> 님  
+    		<span id="name"></span> 님
     	</span>
       	<input id="logout_btn" class="btn" type="button" value="로그아웃"/>
     </form>
@@ -304,7 +304,7 @@ $(function(){
 
 
 
-<!--우측 메뉴창 -->
+<!--우측 메뉴창
 <div class="col-md-3 box">
 <form id="search_form">
 <ul class="list-group">
@@ -350,9 +350,9 @@ $(function(){
 </ul>
 </form>
 </div>
-
+-->
 <!-- 가운데 메인창 -->
-<div id ="main" class="col-md-6 box">
+<div id ="main" class="container box">
 	<table  class="table">
 		<tr>
 			<th>선택</th>
@@ -363,7 +363,8 @@ $(function(){
 			<th>삭제</th>
 		</tr>
 		
-		<c:forEach items="${list}" var="vo">
+
+		<!--
 		<tr>
 			<td>
 				<input type="radio" name="selecthomebook" hb_id="${vo.id}" 
@@ -375,11 +376,12 @@ $(function(){
 			<td>${vo.content }</td>
 			<td>${vo.money }</td>
 			<td align="center"><button type="button" homebookid="${vo.id}" class="close">×</button></td>
-		</tr>	
-		</c:forEach>
+		</tr>
+		-->
+
 	</table>
 </div>
-<!--오른쪽 수입 지출 합계창 -->
+<!--오른쪽 수입 지출 합계창
 <div class="col-md-3">
 <table class="table">
 	
@@ -397,7 +399,7 @@ $(function(){
 	</tr>
 </table>
 </div>
-
+-->
 
 <!--
 	하단 네브바 항상 창의 하단에 달랄 붙어있음
