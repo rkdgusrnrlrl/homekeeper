@@ -56,9 +56,35 @@ router.get('/public/*', function (req, res) {
 });//router get public
 
 router.get('/moneyplaner', function (req, res)  {
+    var filePath = "./main.html";
+    fs.access(filePath, fs.R_OK, function(err){
+
+        if (err) { //파일이 없는 경우
+            console.log(filePath+'는 읽을수 없는 파일입니다.');
+            var rs = fs.createReadStream('../views/doc/not_found.html'); //rederStream
+            rs.pipe(res);
+            res.end();
+        } else {   //파일이 있는 경우
+
+            var rs = fs.createReadStream(filePath); //rederStream
+            rs.on('error', function(err){ // 에러 처리
+                console.log("에러 처리 : ");
+                console.log(err);
+            });//rs.on(err)
+
+            //content-type을 세팅해줌
+            res.setHeader("Content-Type", "text/html");
+
+            rs.pipe(res);//responce 파이핑 해 파일 내보내기
+        }// if(err)
+
+    });//fs.access
 
 
 });
+
+
+
 
 
 var server = http.createServer(function (req, res)  {
