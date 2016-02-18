@@ -11,20 +11,39 @@ var useful = require('./my_modules/usefulFunction.js');
 var router = Router();
 
 //DB 연동부분 나중에 추출해 파일로 만들 예정
-function insert_homekeeper(homekeeper) {
+function insertHomekeeper(homekeeper) {
     mock_data.homekeepers.push(homekeeper);
 }
+
+/**
+ * 가계부 내역 리스트를 보여줌
+ * @param jsonData
+ */
+function findHomeKeeperList(jsonData) {
+    return JSON.stringify(jsonData);
+}
+
+/**
+ * 가계부내역을 삭제함
+ * @param id
+ */
+function deleteHomeKeeper(id) {
+    mock_data.homekeepers = mock_data.homekeepers.filter((val, ind, arr)=> {
+        return val.id != id
+    });
+}
+
 
 //request response 핸들링 하는 함수
 
 /**
  * 파라미터의 값을 추출해 json 으로 만들어줌
- * @param strParams
+ * @param data
  * @returns {{}}
  */
-function getObjFromParam(strParams) {
+function getObjFromParam(data) {
     var obj = {}
-    var temArr = strParams.split('&');
+    var temArr = (data+'').split('&');
     temArr.forEach((val, index, arr) => {
         var keyAndVal = val.split('=');
         var key = useful.fromSnakeToCamel(keyAndVal[0]);
@@ -32,6 +51,7 @@ function getObjFromParam(strParams) {
     });
     return obj
 }
+
 /**
  * response 에 json 데이터를 담아 보내줌
  * @param response
@@ -39,7 +59,10 @@ function getObjFromParam(strParams) {
  */
 function responseJson(response, jsonData) {
     response.setHeader("Content-Type", "application/json");
-    response.write(JSON.stringify(jsonData));
+
+
+    var homekeeperList = findHomeKeeperList(jsonData);
+    response.write(homekeeperList);
     response.end();
 }
 
@@ -158,21 +181,36 @@ router.get('/moneyplaner', function (req, res)  {
     });//fs.access
 });
 
+//select 하는 부분
 router.get('/api/homekeepers', function (req, res)  {
     responseJson(res, mock_data);
 });
 
+//insert 하는 부분
 router.post('/api/homekeepers', function (req, res)  {
     req.on('data', function(chunk) {
 
-        var strParams = chunk.toString();
-        var homekeeper = getObjFromParam(strParams);
-        insert_homekeeper(homekeeper);
+        var homekeeper = getObjFromParam(chunk);
+        insertHomekeeper(homekeeper);
 
-     }).on('end', function() {
-        responseJson(res);
-     });
+    }).on('end', function() {
+        responseJson(res, mock_data);
+    });
 });
+
+//delete 하는 부분
+router.delete('/api/homekeepers/homekeepper', function (req, res)  {
+    req.on('data', function(chunk) {
+
+        var homekeeper = getObjFromParam(chunk);
+        var id = homekeeper.id;
+        deleteHomeKeeper(id);
+
+    }).on('end', function() {
+        responseJson(res, mock_data);
+    });
+});
+
 
 
 

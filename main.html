@@ -106,13 +106,12 @@ function insert_update(handle, serialize){
 	$.ajax({
         type : 'post',
         url : "/api/homekeepers",
-        data : "month="+this_month+"&handle="+handle+"&"+serialize,
+        data : "month="+this_month+"&"+serialize,
         success : function (result) {
-        	alert(result);
         	refreshTable(result);
         },
         error : function(result){
-			alert("error : "+result);
+			console.log("error : "+result);
 		},
 		dataType : 'json'
 	});
@@ -212,25 +211,13 @@ $(function(){
 	        	
     	$.ajax({
 			// type을 설정합니다.
-	        type : 'post',
-	        url : "/api",
+	        method : 'delete',
+	        url : "/api/homekeepers/homekeepper",
         	//사용자가 입력하여 id로 넘어온 값을 서버로 보냅니다.
-	        data : "handle=deleteHomebook&id="+$(this).attr('homebookid'),
+	        data : "id="+$(this).attr('homebookid'),
 	        //성공적으로 값을 서버로 보냈을 경우 처리하는 코드입니다.
 	        success : function (result) {
-	        	
-	        	if($(tr).children(":eq(2)").html()=="수입"){
-	        		var in_sum = parseInt($("#in_sum").html())-parseInt($(tr).children(":eq(4)").html());
-	        		$("#in_sum").html(in_sum);
-	        		var total = in_sum - parseInt($("#out_sum").html());
-	        		$("#total").html(total);
-	        	}else{
-	        		var out_sum = parseInt($("#out_sum").html())-parseInt($(tr).children(":eq(4)").html());
-	        		$("#out_sum").html(out_sum);
-	        		var total = parseInt($("#in_sum").html())-out_sum;
-	        		$("#total").html(total);
-	        	}
-	        	$(tr).remove();
+	        	refreshTable();
 	        },
 	        error : function(result){
 				alert("error : "+result);
