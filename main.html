@@ -104,7 +104,7 @@ function refreshTable(result){
 
 function insert_update(handle, serialize){
 	$.ajax({
-        type : 'get',
+        type : 'post',
         url : "/api/homekeepers",
         data : "month="+this_month+"&handle="+handle+"&"+serialize,
         success : function (result) {
@@ -269,7 +269,7 @@ $(function(){
     		alert("숫자만 입력해주세요");
     	}else{
     		insert_update($(this).attr("handle"), $("#homebookform").serialize());
-    		$.ajax({
+    		/*$.ajax({
     	        type : 'get',
     	        url : "/api/homekeepers",
     	        data : "month="+this_month+"&handle="+$(this).attr("handle")+"&"+$("#homebookform").serialize(),
@@ -280,7 +280,7 @@ $(function(){
     				alert("error : "+result);
     			},
     			dataType : 'json'
-    		});
+    		});*/
     		//ajax end
     	}
     });
@@ -413,8 +413,8 @@ $(function(){
 -->
 <div class="navbar navbar-default navbar-fixed-bottom" role="navigation"><!-- 네브바 하단고정 옵션 -->
 	<div class="container"><!-- 가운데 정렬 컨테이너 -->
-		<form id='homebookform'><input type="hidden" name="hb_id" value="">	<!-- id 값을 히든으로 해서 숨겨서  submit -->
-			
+		<form id='homebookform'>
+
 			<!-- 날자 입력 input (Boostrap-DatePicker-라이브러리사용) -->
 				<div class="col-md-3 box">
 					<div class="input-group date" id="dp3"  data-date-format="yyyy-mm-dd">

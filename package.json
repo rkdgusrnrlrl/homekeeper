@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "finalhandler": "^0.4.1",
-    "router": "^1.1.4"
+    "router": "^1.1.4",
+    "supertest": "^1.2.0"
   }
 }

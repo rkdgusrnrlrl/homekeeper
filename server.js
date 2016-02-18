@@ -6,8 +6,46 @@ var path = require('path');
 
 var Router = require('router');
 var finalhandler = require('finalhandler');
+var useful = require('./my_modules/usefulFunction.js');
 
 var router = Router();
+
+//DB 연동부분 나중에 추출해 파일로 만들 예정
+function insert_homekeeper(homekeeper) {
+    mock_data.homekeepers.push(homekeeper);
+}
+
+//request response 핸들링 하는 함수
+
+/**
+ * 파라미터의 값을 추출해 json 으로 만들어줌
+ * @param strParams
+ * @returns {{}}
+ */
+function getObjFromParam(strParams) {
+    var obj = {}
+    var temArr = strParams.split('&');
+    temArr.forEach((val, index, arr) => {
+        var keyAndVal = val.split('=');
+        var key = useful.fromSnakeToCamel(keyAndVal[0]);
+        obj[key] = decodeURI(keyAndVal[1]);
+    });
+    return obj
+}
+/**
+ * response 에 json 데이터를 담아 보내줌
+ * @param response
+ * @param jsonData
+ */
+function responseJson(response, jsonData) {
+    response.setHeader("Content-Type", "application/json");
+    response.write(JSON.stringify(jsonData));
+    response.end();
+}
+
+
+
+
 
 
 var mock_data = { homekeepers : [
@@ -117,39 +155,23 @@ router.get('/moneyplaner', function (req, res)  {
             rs.pipe(res);
 
         }// if(err)
-
     });//fs.access
-
 });
 
 router.get('/api/homekeepers', function (req, res)  {
-
-    var body = [];
-   /* req.on('data', function(chunk) {
-        console.log("chunk : " + chunk);
-        body.push(chunk);
-    }).on('end', function() {
-        console.log(body);
-    });*/
-    res.setHeader("Content-Type", "application/json");
-    res.write(JSON.stringify(mock_data));
-    console.log(JSON.stringify(mock_data));
-    res.end();
-
+    responseJson(res, mock_data);
 });
 
-//insert homekeeper
 router.post('/api/homekeepers', function (req, res)  {
-
-    var body = [];
     req.on('data', function(chunk) {
-     console.log("chunk : " + chunk);
-     body.push(chunk);
-     }).on('end', function() {
-     console.log(body);
-     });
-    res.end();
 
+        var strParams = chunk.toString();
+        var homekeeper = getObjFromParam(strParams);
+        insert_homekeeper(homekeeper);
+
+     }).on('end', function() {
+        responseJson(res);
+     });
 });
 
 
@@ -161,3 +183,4 @@ var server = http.createServer(function (req, res)  {
 
 
 
+exports.server = server;
