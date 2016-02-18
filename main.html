@@ -103,16 +103,24 @@ function refreshTable(result){
 }
 
 function insert_update(handle, serialize){
+
+	var method = 'post';
+	var url = '/api/homekeepers';
+
+	if('update' == handle){
+		method = 'post';
+		url = '/api/homekeepers/homekeeper';
+	}
+
 	$.ajax({
-        type : 'post',
-        url : "/api/homekeepers",
-        data : "month="+this_month+"&handle="+handle+"&"+serialize,
+		method : method,
+        url : url,
+        data : "month="+this_month+"&"+serialize,
         success : function (result) {
-        	alert(result);
         	refreshTable(result);
         },
         error : function(result){
-			alert("error : "+result);
+			console.log("error : "+result);
 		},
 		dataType : 'json'
 	});
@@ -183,7 +191,7 @@ $(function(){
 	//모달창 띄우기
 	$("body").on("click", ":radio[name=selecthomebook]", function(){
 		
-		$("#update_homebook_form").find(":hidden[name=hb_id]").val($(this).attr("hb_id"));
+		$("#update_homebook_form").find(":hidden[name=id]").val($(this).attr("hb_id"));
 		$("#update_homebook_form").find(":text[name=pay_date]").val($(this).attr("paydate"));
 		$("#update_homebook_form").find("option[value="+$(this).attr("in_out")+"]").attr("selected", "selected");
 		$("#update_homebook_form").find(":text[name=content]").val($(this).attr("content"));
@@ -199,7 +207,7 @@ $(function(){
 	 });
 	 //<%-- 수정 값 업데이트 하기--%>
 	 $("#update").click(function(){
-		 insert_update("updateHomebook", $("#update_homebook_form").serialize());
+		 insert_update("update", $("#update_homebook_form").serialize());
 		 $('#myModal').modal('hide');
 	 });
 	
@@ -212,25 +220,13 @@ $(function(){
 	        	
     	$.ajax({
 			// type을 설정합니다.
-	        type : 'post',
-	        url : "/api",
+	        method : 'delete',
+	        url : "/api/homekeepers/homekeeper",
         	//사용자가 입력하여 id로 넘어온 값을 서버로 보냅니다.
-	        data : "handle=deleteHomebook&id="+$(this).attr('homebookid'),
+	        data : "id="+$(this).attr('homebookid'),
 	        //성공적으로 값을 서버로 보냈을 경우 처리하는 코드입니다.
 	        success : function (result) {
-	        	
-	        	if($(tr).children(":eq(2)").html()=="수입"){
-	        		var in_sum = parseInt($("#in_sum").html())-parseInt($(tr).children(":eq(4)").html());
-	        		$("#in_sum").html(in_sum);
-	        		var total = in_sum - parseInt($("#out_sum").html());
-	        		$("#total").html(total);
-	        	}else{
-	        		var out_sum = parseInt($("#out_sum").html())-parseInt($(tr).children(":eq(4)").html());
-	        		$("#out_sum").html(out_sum);
-	        		var total = parseInt($("#in_sum").html())-out_sum;
-	        		$("#total").html(total);
-	        	}
-	        	$(tr).remove();
+	        	refreshTable();
 	        },
 	        error : function(result){
 				alert("error : "+result);
@@ -486,7 +482,7 @@ $(function(){
       </div>
       <div class="modal-body">
         <form id="update_homebook_form" >
-        	<input type="hidden" name="hb_id" value="">	<!-- id 값을 히든으로 해서 숨겨서  submit -->
+        	<input type="hidden" name="id" value="">	<!-- id 값을 히든으로 해서 숨겨서  submit -->
 			
 			<!-- 날자 입력 input (Boostrap-DatePicker-라이브러리사용) -->
 			<div class="box">
