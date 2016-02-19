@@ -199,7 +199,9 @@ router.post('/api/homekeepers', function (req, res)  {
 });
 
 //delete 하는 부분
+
 router.delete('/api/homekeepers/homekeeper', function (req, res)  {
+
     req.on('data', function(chunk) {
 
         var homekeeper = getObjFromParam(chunk);
@@ -210,6 +212,7 @@ router.delete('/api/homekeepers/homekeeper', function (req, res)  {
         responseJson(res, mock_data);
     });
 });
+
 
 //modify 하는 부분
 router.post('/api/homekeepers/homekeeper', function (req, res)  {
@@ -228,6 +231,7 @@ router.post('/api/homekeepers/homekeeper', function (req, res)  {
         responseJson(res, mock_data);
     });
 });
+
 
 
 
