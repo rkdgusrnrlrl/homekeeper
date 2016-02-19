@@ -42,12 +42,22 @@ function deleteHomeKeeper(id) {
  * @returns {{}}
  */
 function getObjFromParam(data) {
+
+    var keys = ["id" , "payDate", "inOut", "content", "money"];
+
     var obj = {}
     var temArr = (data+'').split('&');
     temArr.forEach((val, index, arr) => {
         var keyAndVal = val.split('=');
         var key = useful.fromSnakeToCamel(keyAndVal[0]);
-        obj[key] = decodeURI(keyAndVal[1]);
+        if(keys.indexOf(key) != -1){
+            if(key == 'content'){
+                obj[key] = decodeURIComponent(keyAndVal[1].replace(/[+]/g, ' '));
+            } else {
+                obj[key] = keyAndVal[1];
+            }
+
+        }
     });
     return obj
 }
